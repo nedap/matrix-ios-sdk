@@ -15,6 +15,9 @@
  limitations under the License.
  */
 
+// NOTICE that the present file has been modified by Nedap Healthcare.
+// Copyright (c) 2023 N.V. Nederlandsche Apparatenfabriek (Nedap). All rights reserved.
+
 #import "MXMediaManager.h"
 
 #import "MXSession.h"
@@ -37,6 +40,13 @@ NSString *const kMXMediaLoaderErrorKey = @"kMXMediaLoaderErrorKey";
 
 NSString *const kMXMediaUploadIdPrefix = @"upload-";
 
+// Modified by Nedap. Store accessToken to set the authorization token on media requests (BER-229)
+@interface MXMediaLoader()
+
+@property (nonatomic) NSString *accessToken;
+
+@end
+
 @implementation MXMediaLoader
 
 @synthesize statisticsDict;
@@ -46,6 +56,16 @@ NSString *const kMXMediaUploadIdPrefix = @"upload-";
     if (self = [super init])
     {
         _state = MXMediaLoaderStateIdle;
+    }
+    return self;
+}
+
+// Modified by Nedap. Init with access token to set the authorization token on media requests (BER-229)
+- (id)initWithAccessToken:(NSString *)accessToken
+{
+    if (self = [self init])
+    {
+        _accessToken = accessToken;
     }
     return self;
 }
@@ -104,24 +124,31 @@ NSString *const kMXMediaUploadIdPrefix = @"upload-";
 
 #pragma mark - Download
 
+// Modified by Nedap. Pass extra params to the url query in order to download media (BER-229)
 - (void)downloadMediaFromURL:(NSString *)url
               withIdentifier:(NSString *)downloadId
+                  parameters:(NSDictionary *)params
            andSaveAtFilePath:(NSString *)filePath
                      success:(blockMXMediaLoader_onSuccess)success
                      failure:(blockMXMediaLoader_onError)failure
 {
-    [self downloadMediaFromURL:url withData:nil identifier:downloadId andSaveAtFilePath:filePath success:success failure:failure];
+    [self downloadMediaFromURL:url withData:nil parameters: params identifier:downloadId andSaveAtFilePath:filePath success:success failure:failure];
 }
 
+// Modified by Nedap. Pass extra params to the url query in order to download media (BER-229)
 - (void)downloadMediaFromURL:(NSString *)url
                     withData:(NSDictionary *)data
+                  parameters:(NSDictionary *)params
                   identifier:(NSString *)downloadId
            andSaveAtFilePath:(NSString *)filePath
                      success:(blockMXMediaLoader_onSuccess)success
                      failure:(blockMXMediaLoader_onError)failure
 {
+    // Modified by Nedap. Build the url with extra params (BER-229)
+    NSURL *nsURL = [self buildUrl:url withParameters:params];
+    
     // Report provided params
-    _downloadMediaURL = url;
+    _downloadMediaURL = nsURL.absoluteString;
     _downloadId = downloadId;
     _downloadOutputFilePath = filePath;
     onSuccess = success;
@@ -131,13 +158,17 @@ NSString *const kMXMediaUploadIdPrefix = @"upload-";
     lastProgressEventTimeStamp = -1;
     
     // Start downloading
-    NSURL *nsURL = [NSURL URLWithString:url];
     downloadData = [[NSMutableData alloc] init];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:nsURL];
     [MXSDKOptions.sharedInstance.HTTPAdditionalHeaders enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull value, BOOL * _Nonnull stop) {
         [request setValue:value forHTTPHeaderField:key];
     }];
+    
+    // Modified by Nedap. Set the authorization token on requests (BER-229)
+    if (self.accessToken) {
+        [request setValue:[NSString stringWithFormat:@"Bearer %@", self.accessToken] forHTTPHeaderField:@"Authorization"];
+    }
     
     if (data)
     {
@@ -153,6 +184,23 @@ NSString *const kMXMediaUploadIdPrefix = @"upload-";
     downloadConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
     [downloadConnection scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
     [downloadConnection start];
+}
+
+// Modified by Nedap. Build the url with extra params (BER-229)
+- (NSURL *)buildUrl:(NSString *)url withParameters:(NSDictionary *)params {
+    NSURLComponents *components = [NSURLComponents componentsWithString:url];
+    NSMutableArray *newQueryItems = [NSMutableArray arrayWithArray: components.queryItems];
+    
+    if (params) {
+        for (NSString *key in params) {
+            NSString *value = params[key];
+            NSURLQueryItem *queryItem = [NSURLQueryItem queryItemWithName:key value:value];
+            [newQueryItems addObject:queryItem];
+        }
+    }
+    
+    [components setQueryItems:newQueryItems];
+    return components.URL;
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response

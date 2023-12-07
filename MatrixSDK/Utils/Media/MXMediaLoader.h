@@ -15,6 +15,9 @@
  limitations under the License.
  */
 
+// NOTICE that the present file has been modified by Nedap Healthcare.
+// Copyright (c) 2023 N.V. Nederlandsche Apparatenfabriek (Nedap). All rights reserved.
+
 #import "TargetConditionals.h"
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
@@ -108,7 +111,7 @@ extern NSString *const kMXMediaUploadIdPrefix;
  `MXMediaLoader` defines a class to download/upload media. It provides progress information during the operation.
  */
 @interface MXMediaLoader : NSObject <NSURLConnectionDataDelegate, NSURLConnectionDelegate>
-{    
+{
     blockMXMediaLoader_onSuccess onSuccess;
     blockMXMediaLoader_onError onError;
     
@@ -177,31 +180,44 @@ extern NSString *const kMXMediaUploadIdPrefix;
 @property (readonly) CGFloat uploadInitialRange;
 @property (readonly) CGFloat uploadRange;
 
+// Modified by Nedap. Init with access token to set the authorization token on media requests (BER-229)
+/**
+ Init 'MXMediaLoader' instance with the access token.
+ 
+ @param accessToken the server access token.
+ */
+- (id)initWithAccessToken:(NSString*)accessToken;
+
 /**
  Cancel the operation.
  */
 - (void)cancel;
 
+// Modified by Nedap. Pass extra params to the url query in order to download media (BER-229)
 /**
  Download data from the provided URL.
  
  @param url remote media url.
  @param downloadId the download identifier.
+ @param params extra key-value pair used to build the url with parameters if any.
  @param filePath output file in which downloaded media must be saved.
  @param success a block called when the operation succeeds.
  @param failure a block called when the operation fails.
  */
 - (void)downloadMediaFromURL:(NSString *)url
               withIdentifier:(NSString *)downloadId
+                  parameters:(NSDictionary *)params
            andSaveAtFilePath:(NSString *)filePath
                      success:(blockMXMediaLoader_onSuccess)success
                      failure:(blockMXMediaLoader_onError)failure;
 
+// Modified by Nedap. Pass extra params to the url query in order to download media (BER-229)
 /**
  Download data from the provided URL with optionally a dictionary of data to post.
  
  @param url remote media url.
  @param data (optional) a dictionary of data sent as a JSON object in the message body.
+ @param params extra key-value pair used to build the url with parameters if any.
  @param downloadId the download identifier.
  @param filePath output file in which downloaded media must be saved.
  @param success a block called when the operation succeeds.
@@ -209,6 +225,7 @@ extern NSString *const kMXMediaUploadIdPrefix;
  */
 - (void)downloadMediaFromURL:(NSString *)url
                     withData:(NSDictionary *)data
+                  parameters:(NSDictionary *)params
                   identifier:(NSString *)downloadId
            andSaveAtFilePath:(NSString *)filePath
                      success:(blockMXMediaLoader_onSuccess)success
