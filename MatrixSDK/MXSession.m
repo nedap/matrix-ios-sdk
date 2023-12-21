@@ -17,6 +17,9 @@
  limitations under the License.
  */
 
+// NOTICE that the present file has been modified by Nedap Healthcare.
+// Copyright (c) 2023 N.V. Nederlandsche Apparatenfabriek (Nedap). All rights reserved.
+
 #import "MXSession.h"
 #import "MatrixSDK.h"
 
@@ -231,7 +234,8 @@ typedef void (^MXOnResumeDone)(void);
     {
         matrixRestClient = mxRestClient;
         _threePidAddManager = [[MX3PidAddManager alloc] initWithMatrixSession:self];
-        mediaManager = [[MXMediaManager alloc] initWithHomeServer:matrixRestClient.homeserver];
+        // Modified by Nedap. Pass access token to load the image (BER-229)
+        mediaManager = [[MXMediaManager alloc] initWithHomeServer:matrixRestClient.homeserver andAccessToken:matrixRestClient.credentials.accessToken];
         rooms = [NSMutableDictionary dictionary];
         roomSummaries = [NSMutableDictionary dictionary];
         _roomSummaryUpdateDelegate = [MXRoomSummaryUpdater roomSummaryUpdaterForSession:self];
@@ -4658,8 +4662,8 @@ typedef void (^MXOnResumeDone)(void);
                  failure(error);
              }
          }];
-    } 
-    else 
+    }
+    else
     {
         if (success)
         {

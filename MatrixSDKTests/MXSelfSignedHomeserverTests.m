@@ -14,6 +14,9 @@
  limitations under the License.
  */
 
+// NOTICE that the present file has been modified by Nedap Healthcare.
+// Copyright (c) 2023 N.V. Nederlandsche Apparatenfabriek (Nedap). All rights reserved.
+
 #import <XCTest/XCTest.h>
 
 #import "MatrixSDKTestsData.h"
@@ -214,15 +217,17 @@
                     XCTAssert(contentURL);
 
                     // Download back the image
+                    // Modified by Nedap. Pass extra params to the url query in order to download media (BER-229)
                     [mxSession.mediaManager downloadMediaFromMatrixContentURI:contentURL
+                                                                    addParams:@{@"event_id":event.eventId}
                                                                      withType:nil
                                                                      inFolder:nil
                                                                       success:^(NSString *outputFilePath) {
-                                                                          [expectation fulfill];
-                                                                      } failure:^(NSError *error) {
-                                                                          XCTFail(@"The request should not fail - NSError: %@", error);
-                                                                          [expectation fulfill];
-                                                                      }];
+                        [expectation fulfill];
+                    } failure:^(NSError *error) {
+                        XCTFail(@"The request should not fail - NSError: %@", error);
+                        [expectation fulfill];
+                    }];
                 }];
             }];
 
@@ -283,7 +288,8 @@
                     NSString *contentURL = event.content[@"url"];
                     XCTAssert(contentURL);
                     
-                    MXMediaManager *mediaManager = [[MXMediaManager alloc] initWithHomeServer:mxSession.matrixRestClient.homeserver];
+                    // Modified by Nedap. Init with access token to set the authorization token on media requests (BER-229)
+                    MXMediaManager *mediaManager = [[MXMediaManager alloc] initWithHomeServer:mxSession.matrixRestClient.homeserver andAccessToken:mxSession.matrixRestClient.credentials.accessToken];
                     XCTAssert(mediaManager);
                     
                     [mxSession close];
@@ -292,16 +298,17 @@
                     [[MXAllowedCertificates sharedInstance] reset];
 
                     // Then, try to download back the image
+                    // Modified by Nedap. Pass extra params to the url query in order to download media (BER-229)
                     [mediaManager downloadMediaFromMatrixContentURI:contentURL
-                                                                     withType:nil
-                                                                     inFolder:nil
-                                                                      success:^(NSString *outputFilePath) {
-                                                                          XCTFail(@"The operation must fail because the self-signed certficate was not trusted (anymore)");
-                                                                          [expectation fulfill];
-                                                                      } failure:^(NSError *error) {
-                                                                          [expectation fulfill];
-                                                                      }];
-
+                                                          addParams:@{@"event_id": event.eventId}
+                                                           withType:nil
+                                                           inFolder:nil
+                                                            success:^(NSString *outputFilePath) {
+                        XCTFail(@"The operation must fail because the self-signed certficate was not trusted (anymore)");
+                        [expectation fulfill];
+                    } failure:^(NSError *error) {
+                        [expectation fulfill];
+                    }];
                 }];
             }];
 

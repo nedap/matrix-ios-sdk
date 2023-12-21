@@ -16,6 +16,9 @@
  limitations under the License.
  */
 
+// NOTICE that the present file has been modified by Nedap Healthcare.
+// Copyright (c) 2023 N.V. Nederlandsche Apparatenfabriek (Nedap). All rights reserved.
+
 #import "TargetConditionals.h"
 
 #import <Photos/Photos.h>
@@ -47,15 +50,24 @@ static MXMediaManager *sharedMediaManager = nil;
 // avoid listing files because it is useless
 static NSUInteger storageCacheSize = 0;
 
+// Modified by Nedap. Store the access token to pass the authorization token to media loader (BER-229)
+@interface MXMediaManager()
+
+@property (nonatomic) NSString *accessToken;
+
+@end
+
 @implementation MXMediaManager
 
-- (id)initWithHomeServer:(NSString *)homeserverURL
+// Modified by Nedap. Init with access token to pass the authorization token to media loader (BER-229)
+- (id)initWithHomeServer:(NSString *)homeserverURL andAccessToken:(NSString *)accessToken
 {
     self = [super init];
     if (self)
     {
         _homeserverURL = homeserverURL;
         _scanManager = nil;
+        _accessToken = accessToken;
     }
     return self;
 }
@@ -469,7 +481,9 @@ static MXLRUCache* imagesCacheLruCache = nil;
     return [MXMediaManager thumbnailCachePathForMatrixContentURI:mxContentURI andType:nil inFolder:folder toFitViewSize:viewSize withMethod:thumbnailingMethod];
 }
 
+// Modified by Nedap. Pass extra params to the url query in order to download media (BER-229)
 - (MXMediaLoader*)downloadMediaFromMatrixContentURI:(NSString *)mxContentURI
+                                          addParams:(NSDictionary *)params
                                            withType:(NSString *)mimeType
                                            inFolder:(NSString *)folder
                                             success:(void (^)(NSString *outputFilePath))success
@@ -493,6 +507,8 @@ static MXLRUCache* imagesCacheLruCache = nil;
     // Create a media loader to download data
     return [MXMediaManager downloadMedia:mediaURL
                                 withData:nil
+                              parameters:params
+                             accessToken:self.accessToken
                            andIdentifier:downloadId
                           saveAtFilePath:filePath
                              scanManager:_scanManager
@@ -500,20 +516,24 @@ static MXLRUCache* imagesCacheLruCache = nil;
                                  failure:failure];
 }
 
+// Modified by Nedap. Pass extra params to the url query in order to download media (BER-229)
 - (MXMediaLoader*)downloadMediaFromMatrixContentURI:(NSString *)mxContentURI
+                                          addParams:(NSDictionary *)params
                                            withType:(NSString *)mimeType
                                            inFolder:(NSString *)folder
 {
-    return [self downloadMediaFromMatrixContentURI:mxContentURI withType:mimeType inFolder:folder success:nil failure:nil];
+    return [self downloadMediaFromMatrixContentURI:mxContentURI addParams: params withType:mimeType inFolder:folder success:nil failure:nil];
 }
 
+// Modified by Nedap. Pass extra params to the url query in order to download media (BER-229)
 - (MXMediaLoader*)downloadThumbnailFromMatrixContentURI:(NSString *)mxContentURI
+                                              addParams:(NSDictionary *)params
                                                withType:(NSString *)mimeType
                                                inFolder:(NSString *)folder
                                           toFitViewSize:(CGSize)viewSize
                                              withMethod:(MXThumbnailingMethod)thumbnailingMethod
-                                                success:(void (^)(NSString *outputFilePath))success
-                                                failure:(void (^)(NSError *error))failure
+                                                success:(void (^)(NSString *))success
+                                                failure:(void (^)(NSError *))failure
 {
     // Check the provided mxc URI by resolving it into an HTTP URL.
     NSString *mediaURL = [self urlOfContentThumbnail:mxContentURI toFitViewSize:viewSize withMethod:thumbnailingMethod];
@@ -531,8 +551,11 @@ static MXLRUCache* imagesCacheLruCache = nil;
     NSString *downloadId = [MXMediaManager thumbnailDownloadIdForMatrixContentURI:mxContentURI inFolder:folder toFitViewSize:viewSize withMethod:thumbnailingMethod];
     
     // Create a media loader to download data
+    // Modified by Nedap. Pass extra params in order to download media (BER-229)
     return [MXMediaManager downloadMedia:mediaURL
                                 withData:nil
+                              parameters:params
+                             accessToken:self.accessToken
                            andIdentifier:downloadId
                           saveAtFilePath:filePath
                              scanManager:_scanManager
@@ -541,8 +564,11 @@ static MXLRUCache* imagesCacheLruCache = nil;
 }
 
 // Private
+// Modified by Nedap. Pass extra params in order to download media (BER-229)
 + (MXMediaLoader*)downloadMedia:(NSString *)mediaURL
                        withData:(NSDictionary *)data
+                     parameters:(NSDictionary *)params
+                    accessToken:(NSString *)accessToken
                   andIdentifier:(NSString *)downloadId
                  saveAtFilePath:(NSString *)filePath
                     scanManager:(MXScanManager *)scanManager
@@ -592,7 +618,8 @@ static MXLRUCache* imagesCacheLruCache = nil;
     else
     {
         // Create a media loader to download data
-        mediaLoader = [[MXMediaLoader alloc] init];
+        // Modified by Nedap. Init with access token to set the authorization token on media requests (BER-229)
+        mediaLoader = [[MXMediaLoader alloc] initWithAccessToken:accessToken];
         // Report this loader
         if (!downloadTable)
         {
@@ -606,8 +633,10 @@ static MXLRUCache* imagesCacheLruCache = nil;
                 if (encryptedBody)
                 {
                     // Launch the download
+                    // Modified by Nedap. Pass nil extra params for other requests than GET (BER-229)
                     [mediaLoader downloadMediaFromURL:mediaURL
                                              withData:@{@"encrypted_body": encryptedBody.JSONDictionary}
+                                           parameters:nil
                                            identifier:downloadId
                                     andSaveAtFilePath:filePath
                                               success:^(NSString *outputFilePath) {
@@ -638,8 +667,10 @@ static MXLRUCache* imagesCacheLruCache = nil;
         else
         {
             // Launch the download without encrypted the request body (if any).
+            // Modified by Nedap. Pass extra params in order to download media (BER-229)
             [mediaLoader downloadMediaFromURL:mediaURL
                                      withData:data
+                                   parameters:params
                                    identifier:downloadId
                             andSaveAtFilePath:filePath
                                       success:^(NSString *outputFilePath) {
@@ -701,8 +732,11 @@ static MXLRUCache* imagesCacheLruCache = nil;
                                                                 inFolder:folder];
     
     // Create a media loader to download data
+    // Modified by Nedap. Pass nil extra params with encrypted media (BER-229)
     return [MXMediaManager downloadMedia:downloadMediaURL
                                 withData:dataToPost
+                              parameters:nil
+                             accessToken:nil
                            andIdentifier:downloadId
                           saveAtFilePath:filePath
                              scanManager:_scanManager

@@ -17,6 +17,9 @@
  limitations under the License.
  */
 
+// NOTICE that the present file has been modified by Nedap Healthcare.
+// Copyright (c) 2023 N.V. Nederlandsche Apparatenfabriek (Nedap). All rights reserved.
+
 #import "MXRoom.h"
 
 #import "MXSession.h"
@@ -45,6 +48,9 @@ NSString *const kMXRoomDidFlushDataNotification = @"kMXRoomDidFlushDataNotificat
 NSString *const kMXRoomInitialSyncNotification = @"kMXRoomInitialSyncNotification";
 NSInteger const kMXRoomAlreadyJoinedErrorCode = 9001;
 NSInteger const kMXRoomInvalidInviteSenderErrorCode = 9002;
+// Modified by Nedap. The size of thumbnail we request from the server is needed to store the downloaded image in cache (BER-229)
+static const int kThumbnailWidth = 320;
+static const int kThumbnailHeight = 240;
 
 #warning File has not been annotated with nullability, see MX_ASSUME_MISSING_NULLABILITY_BEGIN
 
@@ -69,7 +75,7 @@ NSInteger const kMXRoomInvalidInviteSenderErrorCode = 9002;
     BOOL needToLoadLiveTimeline;
 
     /**
-     FIFO queue of objects waiting for [self liveTimeline:]. 
+     FIFO queue of objects waiting for [self liveTimeline:].
      */
     NSMutableArray<void (^)(id<MXEventTimeline>)> *pendingLiveTimelineRequesters;
 
@@ -1193,7 +1199,9 @@ NSInteger const kMXRoomInvalidInviteSenderErrorCode = 9002;
                 }
 
                 // Copy the cached image to the actual cacheFile path
-                NSString *actualCacheFilePath = [MXMediaManager cachePathForMatrixContentURI:url andType:mimetype inFolder:self.roomId];
+                // Modified by Nedap. The size of thumbnail we request from the server is needed to store the downloaded image in cache (BER-229)
+                NSString *actualCacheFilePath = [MXMediaManager thumbnailCachePathForMatrixContentURI:url andType:mimetype inFolder:self.roomId toFitViewSize:CGSizeMake(kThumbnailWidth, kThumbnailHeight) withMethod:MXThumbnailingMethodScale];
+                                
                 NSError *error;
                 [[NSFileManager defaultManager] copyItemAtPath:cacheFilePath toPath:actualCacheFilePath error:&error];
 
@@ -3254,7 +3262,7 @@ NSInteger const kMXRoomInvalidInviteSenderErrorCode = 9002;
 
                     // Here we find the right event to acknowledge, and it is posterior to the current position (if any).
                     break;
-                }                
+                }
             }
         }
     }

@@ -45,14 +45,16 @@ extern NSString *const kMXMediaManagerDefaultCacheFolder;
  */
 @interface MXMediaManager : NSObject
 
+// Modified by Nedap. Init with access token to pass the authorization token to media loader (BER-229)
 /**
  Create an instance based on a homeserver url. This homeserver URL is required to resolve
  the Matrix Content URI (in the form of "mxc://...").
  
  @param homeserverURL the homeserver URL.
+ @param accessToken the server access token.
  @return a MXMediaManager instance.
  */
-- (id)initWithHomeServer:(NSString *)homeserverURL;
+- (id)initWithHomeServer:(NSString *)homeserverURL andAccessToken:(NSString*)accessToken;
 
 /**
  The homeserver URL.
@@ -123,7 +125,7 @@ extern NSString *const kMXMediaManagerDefaultCacheFolder;
  @return Image (if any).
  */
 #if TARGET_OS_IPHONE
-+ (UIImage*)loadPictureFromFilePath:(NSString*)filePath; 
++ (UIImage*)loadPictureFromFilePath:(NSString*)filePath;
 #elif TARGET_OS_OSX
 + (NSImage*)loadPictureFromFilePath:(NSString*)filePath;
 #endif
@@ -210,10 +212,12 @@ extern NSString *const kMXMediaManagerDefaultCacheFolder;
                                       toFitViewSize:(CGSize)viewSize
                                          withMethod:(MXThumbnailingMethod)thumbnailingMethod;
 
+// Modified by Nedap. Pass extra params to the url query in order to download media (BER-229)
 /**
  Download data from the provided Matrix Content (MXC) URI (in the form of "mxc://...").
  
  @param mxContentURI the Matrix Content URI.
+ @param params extra key-value pair used to build the url with parameters if any.
  @param mimeType the media mime type (may be nil).
  @param folder the cache folder to use (may be nil). kMXMediaManagerDefaultCacheFolder is used by default.
  @param success a block called when the download succeeds. This block gets the path of the resulting file.
@@ -221,28 +225,34 @@ extern NSString *const kMXMediaManagerDefaultCacheFolder;
  @return a media loader in order to let the user cancel this action.
  */
 - (MXMediaLoader*)downloadMediaFromMatrixContentURI:(NSString *)mxContentURI
+                                          addParams:(NSDictionary *)params
                                            withType:(NSString *)mimeType
                                            inFolder:(NSString *)folder
                                             success:(void (^)(NSString *outputFilePath))success
                                             failure:(void (^)(NSError *error))failure;
 
+// Modified by Nedap. Pass extra params to the url query in order to download media (BER-229)
 /**
  Download data from the provided Matrix Content (MXC) URI (in the form of "mxc://...").
  
  @param mxContentURI the Matrix Content URI.
+ @param params extra key-value pair used to build the url with parameters if any.
  @param mimeType the media mime type (may be nil).
  @param folder the cache folder to use (may be nil). kMXMediaManagerDefaultCacheFolder is used by default.
  @return a media loader in order to let the user cancel this action.
  */
 - (MXMediaLoader*)downloadMediaFromMatrixContentURI:(NSString *)mxContentURI
+                                          addParams:(NSDictionary *)params
                                            withType:(NSString *)mimeType
                                            inFolder:(NSString *)folder;
 
+// Modified by Nedap. Pass extra params to the url query in order to download media (BER-229)
 /**
  Download thumbnail data from the provided Matrix Content (MXC) URI (in the form of "mxc://...")
  to fit a specific view size.
  
  @param mxContentURI the Matrix Content URI.
+ @param params extra key-value pair used to build the url with parameters if any.
  @param mimeType the media mime type (may be nil).
  @param folder the cache folder to use (may be nil). kMXMediaManagerDefaultCacheFolder is used by default.
  @param viewSize the size in points of the view in which the thumbnail will be displayed, it will be converted
@@ -253,6 +263,7 @@ extern NSString *const kMXMediaManagerDefaultCacheFolder;
  @return a media loader in order to let the user cancel this action.
  */
 - (MXMediaLoader*)downloadThumbnailFromMatrixContentURI:(NSString *)mxContentURI
+                                              addParams:(NSDictionary *)params
                                                withType:(NSString *)mimeType
                                                inFolder:(NSString *)folder
                                           toFitViewSize:(CGSize)viewSize
