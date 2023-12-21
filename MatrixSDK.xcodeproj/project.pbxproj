@@ -2707,6 +2707,7 @@
 		92634B811EF2E3C400DB9F60 /* MXCallKitConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MXCallKitConfiguration.m; sourceTree = "<group>"; };
 		9274AFE61EE580240009BEB6 /* MXCallKitAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MXCallKitAdapter.h; sourceTree = "<group>"; };
 		9274AFE71EE580240009BEB6 /* MXCallKitAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MXCallKitAdapter.m; sourceTree = "<group>"; };
+		92A93E072B3307AF002612F9 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		A0A23978295202930001F722 /* MXAggregatedPollsUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MXAggregatedPollsUpdater.swift; sourceTree = "<group>"; };
 		A0B1217E295306F700E704C2 /* MXAggregatedPollsUpdaterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MXAggregatedPollsUpdaterTests.swift; sourceTree = "<group>"; };
 		A75CAD682A9796DE00F06072 /* MXWellKnownAuthentication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MXWellKnownAuthentication.m; sourceTree = "<group>"; };
@@ -4283,6 +4284,7 @@
 		32C6F92319DD814400EA4E9C = {
 			isa = PBXGroup;
 			children = (
+				92A93E072B3307AF002612F9 /* CHANGELOG.md */,
 				32C03CBA21231C2500D92712 /* AUTHORS.rst */,
 				32D5573526BAF1540023D286 /* CHANGES.md */,
 				32C03CB721231C2500D92712 /* Podfile */,
