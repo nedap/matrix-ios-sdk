@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [v0.1.1] - 19/01/2024
 ##### Added
-- BER-229: Merge upstream MatrixSDK v0.27.5. 
+- BER-321: Merge upstream MatrixSDK v0.27.5. 
 
 ##### Fixed
 
