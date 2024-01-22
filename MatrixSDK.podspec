@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "MatrixSDK"
-  s.version      = "0.1.0"
+  s.version      = "0.1.1"
   s.summary      = "The iOS SDK to build apps compatible with Matrix (https://www.matrix.org)"
 
   s.description  = <<-DESC
@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.author             = { "matrix.org" => "support@matrix.org" }
   s.social_media_url   = "http://twitter.com/matrixdotorg"
 
-  s.source       = { :git => "https://github.com/nedap/matrix-ios-sdk.git", :tag => "nedap/v#{s.version}" }
+  s.source       = { :git => "https://github.com/nedap/matrix-ios-sdk.git", :tag => "nedap/#{s.version}" }
   
   s.requires_arc  = true
   s.swift_versions = ['5.1', '5.2']
