@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+// NOTICE that the present file has been modified by Nedap Healthcare.
+// Copyright (c) 2024 N.V. Nederlandsche Apparatenfabriek (Nedap). All rights reserved.
 
 import Foundation
 import MatrixSDKCrypto
@@ -131,25 +133,20 @@ class MXCryptoMachine {
                 path: url.path,
                 passphrase: passphrase
             )
+        // Modified by Nedap. Handle all `CryptoStoreError` cases by deleting previous data and trying again (BER-336)
+        } catch let error as CryptoStoreError {
+            // If we cannot open machine due to any CryptoStoreError, delete previous data and try again.
+            log.error("Cannot open crypto store", context: ["error": error])
+            try FileManager.default.removeItem(at: url)
+            return try OlmMachine(
+                userId: userId,
+                deviceId: deviceId,
+                path: url.path,
+                passphrase: passphrase
+            )
+        // Otherwise re-throw the error
         } catch {
-            // If we cannot open machine due to a mismatched account, delete previous data and try again
-            if case CryptoStoreError.CryptoStore(let message) = error,
-               message.contains(Self.MismatchedAccountError) {
-                log.error("Credentials of the account do not match, deleting previous data", context: [
-                    "error": message
-                ])
-                try FileManager.default.removeItem(at: url)
-                return try OlmMachine(
-                    userId: userId,
-                    deviceId: deviceId,
-                    path: url.path,
-                    passphrase: passphrase
-                )
-
-            // Otherwise re-throw the error
-            } else {
-                throw error
-            }
+            throw error
         }
     }
 }

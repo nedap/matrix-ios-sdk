@@ -2,6 +2,14 @@
 All notable changes specific for Berichten Matrix SDK will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.1.3] - Unreleased
+##### Added
+
+##### Fixed
+- BER-336: Handle all `CryptoStoreError` cases by deleting previous data and trying again
+
+##### Changed
+
 ## [v0.1.2] - 12/03/2024
 ##### Added
 - BER-332: Merge upstream MatrixSDK v0.27.6. 
@@ -29,6 +37,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+[v0.1.3]: https://github.com/nedap/matrix-ios-sdk/compare/nedap/0.1.2...nedap/0.1.3
 [v0.1.2]: https://github.com/nedap/matrix-ios-sdk/compare/nedap/0.1.1...nedap/0.1.2
 [v0.1.1]: https://github.com/nedap/matrix-ios-sdk/compare/nedap/0.1.0...nedap/0.1.1
 [v0.1.0]: https://github.com/nedap/matrix-ios-sdk/compare/nedap/0.1.0...nedap/0.1.0
