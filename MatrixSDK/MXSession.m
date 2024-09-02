@@ -234,8 +234,7 @@ typedef void (^MXOnResumeDone)(void);
     {
         matrixRestClient = mxRestClient;
         _threePidAddManager = [[MX3PidAddManager alloc] initWithMatrixSession:self];
-        // Modified by Nedap. Pass access token to load the image (BER-229)
-        mediaManager = [[MXMediaManager alloc] initWithHomeServer:matrixRestClient.homeserver andAccessToken:matrixRestClient.credentials.accessToken];
+        mediaManager = [[MXMediaManager alloc] initWithRestClient:matrixRestClient];
         rooms = [NSMutableDictionary dictionary];
         roomSummaries = [NSMutableDictionary dictionary];
         _roomSummaryUpdateDelegate = [MXRoomSummaryUpdater roomSummaryUpdaterForSession:self];

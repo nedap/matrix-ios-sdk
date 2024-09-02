@@ -1,7 +1,33 @@
-### Pull Request Checklist
+**Context**
+- Why do we want/need it?
 
-<!-- Please read CONTRIBUTING.md before submitting your pull request -->
+**Relevant issues**
+- Closes ...(e.g. #138)
 
-* [ ] Pull request is based on the develop branch
-* [ ] Pull request contains a changelog file in ./changelog.d. See https://github.com/matrix-org/matrix-ios-sdk/blob/develop/CONTRIBUTING.md#changelog
-* [ ] Pull request includes a [sign off](https://github.com/matrix-org/matrix-ios-sdk/blob/develop/CONTRIBUTING.md#sign-off)
+**Changes**
+- What does it do?
+- In summary, what changes are made to the code?
+
+**Known problems**
+- What problems do still arise or are anticipated?
+- Which part of the solution do you need help with?
+
+**Extra attention**
+- What do I need to pay extra attention to as a reviewer?
+
+**Check-list**
+- [ ] Acceptance criteria described in the issue are satisfied, or the bug(s) is/are fixed.
+- [ ] Documentation present (relevant information is properly documented).
+- [ ] Written tests for test suite (optional).
+- [ ] CHANGELOG updated.
+
+**Tested on devices**
+- [ ] Minimum supported iOS version.
+- [ ] Maximum supported iOS version.
+- [ ] Lowest resolution supported.
+- [ ] Highest resolution supported.
+- [ ] Device with a notch.
+- [ ] Device without a notch.
+
+**Is this issue considered as Done?**
+- [ ] It meets our [DoD](https://github.com/nedap/healthcare-mobile/wiki/DoD).
