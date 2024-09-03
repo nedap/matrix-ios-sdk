@@ -1,3 +1,40 @@
+## Changes in 0.27.13 (2024-08-20)
+
+🙌 Improvements
+
+- Add UTC timestamps to console log lines. ([#7472](https://github.com/vector-im/element-ios/issues/7472))
+
+📄 Documentation
+
+- Drop the requirement for "real" or "legally identifiable" name in order to contribute, in line with updated Foundation policy. ([#1875](https://github.com/matrix-org/matrix-ios-sdk/pull/1875))
+
+
+## Changes in 0.27.12 (2024-07-23)
+
+🙌 Improvements
+
+- Expose MXRroomPowerLevels Swift wrappers to Element ([#1869](https://github.com/matrix-org/matrix-ios-sdk/pull/1869))
+
+🐛 Bugfixes
+
+- Fix CallKit audio session late init in VoIP call. ([#1866](https://github.com/matrix-org/matrix-ios-sdk/pull/1866))
+
+
+## Changes in 0.27.11 (2024-06-18)
+
+No significant changes.
+
+
+## Changes in 0.27.10 (2024-06-17)
+
+No significant changes.
+
+
+## Changes in 0.27.9 (2024-06-13)
+
+No significant changes.
+
+
 ## Changes in 0.27.8 (2024-05-29)
 
 🙌 Improvements

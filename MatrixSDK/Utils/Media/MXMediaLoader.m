@@ -40,10 +40,10 @@ NSString *const kMXMediaLoaderErrorKey = @"kMXMediaLoaderErrorKey";
 
 NSString *const kMXMediaUploadIdPrefix = @"upload-";
 
-// Modified by Nedap. Store accessToken to set the authorization token on media requests (BER-229)
+
 @interface MXMediaLoader()
 
-@property (nonatomic) NSString *accessToken;
+@property (nonatomic, readonly) NSString* accessToken;
 
 @end
 
@@ -51,20 +51,11 @@ NSString *const kMXMediaUploadIdPrefix = @"upload-";
 
 @synthesize statisticsDict;
 
-- (id)init
+- (id)initWithAccessToken:(NSString *) accessToken
 {
     if (self = [super init])
     {
         _state = MXMediaLoaderStateIdle;
-    }
-    return self;
-}
-
-// Modified by Nedap. Init with access token to set the authorization token on media requests (BER-229)
-- (id)initWithAccessToken:(NSString *)accessToken
-{
-    if (self = [self init])
-    {
         _accessToken = accessToken;
     }
     return self;
@@ -165,11 +156,7 @@ NSString *const kMXMediaUploadIdPrefix = @"upload-";
         [request setValue:value forHTTPHeaderField:key];
     }];
     
-    // Modified by Nedap. Set the authorization token on requests (BER-229)
-    if (self.accessToken) {
-        [request setValue:[NSString stringWithFormat:@"Bearer %@", self.accessToken] forHTTPHeaderField:@"Authorization"];
-    }
-    
+    [request setValue: [NSString stringWithFormat:@"Bearer %@", _accessToken] forHTTPHeaderField: @"Authorization"];
     if (data)
     {
         // Use an HTTP POST method to send this data as JSON object.
@@ -426,7 +413,7 @@ NSString *const kMXMediaUploadIdPrefix = @"upload-";
     {
         // Create a unique upload Id
         _uploadId = [NSString stringWithFormat:@"%@%@", kMXMediaUploadIdPrefix, [[NSProcessInfo processInfo] globallyUniqueString]];
-        
+        _accessToken = matrixSession.matrixRestClient.credentials.accessToken;
         mxSession = matrixSession;
         _uploadInitialRange = initialRange;
         _uploadRange = range;

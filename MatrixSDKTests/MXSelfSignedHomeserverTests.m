@@ -288,8 +288,7 @@
                     NSString *contentURL = event.content[@"url"];
                     XCTAssert(contentURL);
                     
-                    // Modified by Nedap. Init with access token to set the authorization token on media requests (BER-229)
-                    MXMediaManager *mediaManager = [[MXMediaManager alloc] initWithHomeServer:mxSession.matrixRestClient.homeserver andAccessToken:mxSession.matrixRestClient.credentials.accessToken];
+                    MXMediaManager *mediaManager = [[MXMediaManager alloc] initWithRestClient:mxSession.matrixRestClient];
                     XCTAssert(mediaManager);
                     
                     [mxSession close];

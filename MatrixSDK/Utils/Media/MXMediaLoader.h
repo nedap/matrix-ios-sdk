@@ -180,13 +180,7 @@ extern NSString *const kMXMediaUploadIdPrefix;
 @property (readonly) CGFloat uploadInitialRange;
 @property (readonly) CGFloat uploadRange;
 
-// Modified by Nedap. Init with access token to set the authorization token on media requests (BER-229)
-/**
- Init 'MXMediaLoader' instance with the access token.
- 
- @param accessToken the server access token.
- */
-- (id)initWithAccessToken:(NSString*)accessToken;
+- (id)initWithAccessToken:(NSString *) accessToken;
 
 /**
  Cancel the operation.
