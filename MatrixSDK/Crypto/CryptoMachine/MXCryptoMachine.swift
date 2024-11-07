@@ -136,12 +136,10 @@ class MXCryptoMachine {
                 passphrase: passphrase
             )
         } catch {
-            // If we cannot open machine due to a mismatched account, delete previous data and try again
-            if case CryptoStoreError.CryptoStore(let message) = error,
-               message.contains(Self.MismatchedAccountError) {
-                log.error("Credentials of the account do not match, deleting previous data", context: [
-                    "error": message
-                ])
+            // Modified by Nedap. Handle `OpenStore` and `CryptoStore` error cases by deleting previous data and trying again (BER-541)
+            switch error {
+            case CryptoStoreError.OpenStore, CryptoStoreError.CryptoStore:
+                log.error("Cannot open crypto store", context: ["error": error])
                 try FileManager.default.removeItem(at: url)
                 return try OlmMachine(
                     userId: userId,
@@ -151,7 +149,7 @@ class MXCryptoMachine {
                 )
 
             // Otherwise re-throw the error
-            } else {
+            default:
                 throw error
             }
         }

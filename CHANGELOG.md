@@ -2,6 +2,14 @@
 All notable changes specific for Berichten Matrix SDK will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.1.] - 06/11/2024
+##### Added
+
+##### Fixed
+- BER-541: Handle `OpenStore` and `CryptoStore` errors by deleting previous data and retrying the crypto store opening
+
+##### Changed
+
 ## [v0.1.4] - 02/09/2024
 ##### Added
 - BER-395: Merge upstream MatrixSDK v0.27.13.
