@@ -1,3 +1,23 @@
+## Changes in 0.27.17 (2024-12-10)
+
+No significant changes.
+
+
+## Changes in 0.27.16 (2024-11-12)
+
+No significant changes.
+
+
+## Changes in 0.27.15 (2024-10-15)
+
+No significant changes.
+
+
+## Changes in 0.27.14 (2024-09-17)
+
+No significant changes.
+
+
 ## Changes in 0.27.13 (2024-08-20)
 
 🙌 Improvements
