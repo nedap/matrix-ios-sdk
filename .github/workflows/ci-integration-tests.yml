@@ -3,7 +3,7 @@ name: Integration Tests CI
 on:
   # Triggers the workflow on any pull request and push to develop
   push:
-    branches: [ develop ]
+    branches: [ ons_master ]
   pull_request:
 
   # Allows you to run this workflow manually from the Actions tab
@@ -85,9 +85,3 @@ jobs:
         with:
           name: MatrixSDK-macOS.xcresult
           path: build/test/MatrixSDK-macOS.xcresult/
-
-      # Upload coverage
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
