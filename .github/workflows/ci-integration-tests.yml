@@ -3,7 +3,7 @@ name: Integration Tests CI
 on:
   # Triggers the workflow on any pull request and push to develop
   push:
-    branches: [ develop ]
+    branches: [ ons_master ]
   pull_request:
 
   # Allows you to run this workflow manually from the Actions tab
@@ -12,7 +12,7 @@ on:
 jobs:
   integration-tests:
     name: Integration Tests
-    runs-on: macos-13
+    runs-on: macos-15
 
     concurrency:
       # When running on develop, use the sha to allow all runs of this workflow to run concurrently.
@@ -25,25 +25,25 @@ jobs:
 
       # Common cache
       # Note: GH actions do not support yaml anchor yet. We need to duplicate this for every job
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-pods-
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-gems-
       # Cache for python env for Synapse
-      - name: Set up Python 3.8
+      - name: Set up Python 3.13
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.13
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip
@@ -53,7 +53,7 @@ jobs:
 
       # Set up a Synapse server
       - name: Start synapse server
-        uses: michaelkaye/setup-matrix-synapse@v1.0.3
+        uses: michaelkaye/setup-matrix-synapse@v1.0.5
         with:
           uploadLogs: true
           httpPort: 8080
@@ -85,9 +85,3 @@ jobs:
         with:
           name: MatrixSDK-macOS.xcresult
           path: build/test/MatrixSDK-macOS.xcresult/
-
-      # Upload coverage
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
