@@ -95,7 +95,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-[v0.1.10]: https://github.com/nedap/matrix-ios-sdk/compare/nedap/0.1.8...nedap/0.1.10
+[v0.1.10]: https://github.com/nedap/matrix-ios-sdk/compare/nedap/0.1.9...nedap/0.1.10
 [v0.1.9]: https://github.com/nedap/matrix-ios-sdk/compare/nedap/0.1.8...nedap/0.1.9
 [v0.1.8]: https://github.com/nedap/matrix-ios-sdk/compare/nedap/0.1.7...nedap/0.1.8
 [v0.1.7]: https://github.com/nedap/matrix-ios-sdk/compare/nedap/0.1.6...nedap/0.1.7
