@@ -2,6 +2,14 @@
 All notable changes specific for Berichten Matrix SDK will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.1.11] - 07/01/2026
+##### Added
+- BER-693: Merge upstream MatrixSDK
+
+##### Fixed
+
+##### Changed
+
 ## [v0.1.10] - 29/07/2025
 ##### Added
 - BER-652: Merge upstream MatrixSDK
@@ -95,6 +103,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+[v0.1.11]: https://github.com/nedap/matrix-ios-sdk/compare/nedap/0.1.10...nedap/0.1.11
 [v0.1.10]: https://github.com/nedap/matrix-ios-sdk/compare/nedap/0.1.9...nedap/0.1.10
 [v0.1.9]: https://github.com/nedap/matrix-ios-sdk/compare/nedap/0.1.8...nedap/0.1.9
 [v0.1.8]: https://github.com/nedap/matrix-ios-sdk/compare/nedap/0.1.7...nedap/0.1.8
